@@ -12,11 +12,13 @@ public class PlayerMove : MonoBehaviour
     public SphereCollider col;
     public LayerMask groundLayers;
     public Animation lionAnimation;
+    private Vector3 startingPoint;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<SphereCollider>();
         lionAnimation.Play("idle");
+        startingPoint = transform.position;
     }
     void Update()
     {
@@ -46,10 +48,19 @@ public class PlayerMove : MonoBehaviour
     void OnTriggerEnter(Collider other)
 {
     print("Collision detected with trigger object " + other.name);
+    lionAnimation.Stop();
+    StartCoroutine(delayRespawn());
 }
 
     private bool isGrounded()
     {
         return Physics.CheckCapsule(col.bounds.center, new Vector3(col.bounds.center.x, col.bounds.min.y, col.bounds.center.z), col.radius * .9f, groundLayers);
+    }
+
+        IEnumerator delayRespawn()
+    {
+        Debug.Log("Started Coroutine at timestamp : " + Time.time);
+        yield return new WaitForSeconds(2);
+        Debug.Log("Finished Coroutine at timestamp : " + Time.time);
     }
 }
